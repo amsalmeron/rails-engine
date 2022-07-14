@@ -113,6 +113,43 @@ RSpec.describe 'Items API' do
         expect(found_merchant[:attributes][:name]).to eq(merchant.name)
     end
     
+    it "find all items that matches search description" do
+        merchant = Merchant.create!(name: 'Teddy')
+        item = Item.create!(name: 'Koolaid', description: 'Juice', unit_price: 40.0, merchant_id: merchant.id)
+        item_2 = Item.create!(name: 'Milkoo', description: 'Dairy', unit_price: 90.5, merchant_id: merchant.id)
+        item_3 = Item.create!(name: 'Fanta', description: 'Soda', unit_price: 99.7, merchant_id: merchant.id)
+        
+        
+        get "/api/v1/items/find_all?name=oo"
+
+        items = JSON.parse(response.body, symbolize_names: true)
+        expect(response).to  be_successful
+        expect(response).to  have_http_status(200)
+        found_items = items[:data]
+
+        expect(found_items.count).to  eq(2)
+        expect(found_items.first[:attributes][:name]).to  eq('Koolaid')
+        expect(found_items.second[:attributes][:name]).to  eq('Milkoo')
+    end
+
+    it "finds one(first alphabetical) item that matches search description" do
+        merchant = Merchant.create!(name: 'Teddy')
+        item = Item.create!(name: 'Koolaid', description: 'Juice', unit_price: 40.0, merchant_id: merchant.id)
+        item_2 = Item.create!(name: 'Milkoo', description: 'Dairy', unit_price: 90.5, merchant_id: merchant.id)
+        item_3 = Item.create!(name: 'Fanta', description: 'Soda', unit_price: 99.7, merchant_id: merchant.id)
+        
+        
+        get "/api/v1/items/find?name=oo"
+
+        item = JSON.parse(response.body, symbolize_names: true)
+        expect(response).to  be_successful
+        expect(response).to  have_http_status(200)
+
+        found_item = item[:data]
+
+        expect(found_item[:attributes][:name]).to  eq('Koolaid')
+        expect(found_item[:attributes][:description]).to  eq('Juice')
+    end
     
     
 
