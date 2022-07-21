@@ -44,5 +44,10 @@ RSpec.describe 'Merchants API' do
         expect(merchant_items.first[:attributes][:description]).to be_a String 
         expect(merchant_items.first[:attributes][:unit_price]).to be_a Float 
     end
+
+    it "returns the specified number of merchants with most items sold" do
+        get "/api/v1/merchants/most_items"
+    end
+    
     
 end
